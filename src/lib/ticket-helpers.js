@@ -50,22 +50,16 @@ export async function openTicketForUser(
 
     const config = getTicketConfig(guild.id);
 
-    const ticketNumber = createTicket({
-      guildId: guild.id,
-      userId: user.id,
-      userTag: user.tag,
-    });
-
     const categoryId = categoryOverride?.categoryId ?? config?.category_id ?? null;
     const supportRole = categoryOverride?.supportRole ?? config?.support_role ?? null;
     const channelName = categoryOverride?.name
       ? `${categoryOverride.name.toLowerCase().replace(/\s+/g, "-")}-${user.username}`
-      : `ticket-${user.username}-${ticketNumber}`;
+      : `ticket-${user.username}`;
 
     const channelOptions = {
       name: channelName,
       type: ChannelType.GuildText,
-      topic: `Ticket for ${user.tag} (${user.id})`,
+      topic: `Ticket for ${user.username} (${user.id})`,
       permissionOverwrites: [
         {
           id: guild.id,
@@ -94,6 +88,7 @@ export async function openTicketForUser(
     }
 
     const channel = await guild.channels.create(channelOptions);
+    createTicket(channel.id, guild.id, user.id);
 
     const welcomeMessage = (config?.welcome_message ?? "Hello {user}, thank you for opening a ticket. A member of staff will be with you shortly. Please describe your issue below.")
       .replace("{user}", `<@${user.id}>`);
@@ -127,7 +122,7 @@ export async function openTicketForUser(
           const logContainer = new ContainerBuilder();
           logContainer.addTextDisplayComponents(
             new TextDisplayBuilder().setContent(
-              `## ${E.ticket} Ticket Opened\n**User:** <@${user.id}> (${user.tag})\n**Channel:** <#${channel.id}>\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
+              `## ${E.ticket} Ticket Opened\n**User:** <@${user.id}> (${user.username})\n**Channel:** <#${channel.id}>\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
             )
           );
           await logChannel.send({ components: [logContainer], flags: MessageFlags.IsComponentsV2 });
@@ -207,7 +202,7 @@ export async function closeTicketChannel(
         const logContainer = new ContainerBuilder();
         logContainer.addTextDisplayComponents(
           new TextDisplayBuilder().setContent(
-            `## ${E.lock} Ticket Closed\n**Closed by:** <@${closedBy.id}> (${closedBy.tag})\n**Channel:** <#${channelId}>${reason ? `\n**Reason:** ${reason}` : ""}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
+            `## ${E.lock} Ticket Closed\n**Closed by:** <@${closedBy.id}> (${closedBy.username})\n**Channel:** <#${channelId}>${reason ? `\n**Reason:** ${reason}` : ""}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
           )
         );
         await logChannel.send({ components: [logContainer], flags: MessageFlags.IsComponentsV2 });
@@ -269,7 +264,7 @@ export async function reopenTicketChannel(
         const logContainer = new ContainerBuilder();
         logContainer.addTextDisplayComponents(
           new TextDisplayBuilder().setContent(
-            `## ${E.unlock} Ticket Reopened\n**Reopened by:** <@${reopenedBy.id}> (${reopenedBy.tag})\n**Channel:** <#${channelId}>\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
+            `## ${E.unlock} Ticket Reopened\n**Reopened by:** <@${reopenedBy.id}> (${reopenedBy.username})\n**Channel:** <#${channelId}>\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
           )
         );
         await logChannel.send({ components: [logContainer], flags: MessageFlags.IsComponentsV2 });
@@ -297,7 +292,7 @@ export async function closeTicketAndDelete(
         const logContainer = new ContainerBuilder();
         logContainer.addTextDisplayComponents(
           new TextDisplayBuilder().setContent(
-            `## ${E.lock} Ticket Closed & Deleted\n**Closed by:** <@${closedBy.id}> (${closedBy.tag})\n**Channel:** #${channel?.name ?? channelId}${reason ? `\n**Reason:** ${reason}` : ""}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
+            `## ${E.lock} Ticket Closed & Deleted\n**Closed by:** <@${closedBy.id}> (${closedBy.username})\n**Channel:** #${channel?.name ?? channelId}${reason ? `\n**Reason:** ${reason}` : ""}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
           )
         );
         await logChannel.send({ components: [logContainer], flags: MessageFlags.IsComponentsV2 });
@@ -326,7 +321,7 @@ export async function deleteTicketChannel(
         const logContainer = new ContainerBuilder();
         logContainer.addTextDisplayComponents(
           new TextDisplayBuilder().setContent(
-            `## ${E.trash} Ticket Deleted\n**Deleted by:** <@${deletedBy.id}> (${deletedBy.tag})\n**Channel:** #${channel.name ?? channelId}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
+            `## ${E.trash} Ticket Deleted\n**Deleted by:** <@${deletedBy.id}> (${deletedBy.username})\n**Channel:** #${channel.name ?? channelId}\n**Time:** <t:${Math.floor(Date.now() / 1000)}:F>`
           )
         );
         await logChannel.send({ components: [logContainer], flags: MessageFlags.IsComponentsV2 });
