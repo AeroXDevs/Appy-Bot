@@ -597,6 +597,14 @@ export default {
 
         // ── Application accept/reject vote buttons ─────────────────────────────
         if (customId.startsWith("app_accept_") || customId.startsWith("app_deny_")) {
+          if (!hasTicketPermission(interaction.member, interaction.guildId)) {
+            await interaction.reply({
+              content: "You need to be a staff member to vote on applications.",
+              flags: MessageFlags.Ephemeral,
+            });
+            return;
+          }
+
           const isAccept = customId.startsWith("app_accept_");
           const appIdString = customId.replace(/^app_(accept|deny)_/, "");
           if (!appIdString) return;
