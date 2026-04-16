@@ -1,0 +1,22 @@
+# Ignore everything
+*
+
+# Allow project source
+!src/
+!src/**
+!tools/
+!tools/**
+
+# Allow config files
+!package.json
+!package-lock.json
+
+# Allow docs and license
+!README.md
+!LICENSE
+!example.env
+
+.env
+node_modules/
+data/
+logs/
