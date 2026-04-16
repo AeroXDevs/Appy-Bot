@@ -221,11 +221,11 @@ export function castVote(id, voterId, vote) {
 
   const threshold = 3;
   if (acceptVotes.length >= threshold) {
-    db.prepare(`UPDATE applications SET status = 'accepted', reviewed_by = ?, reviewed_at = datetime('now') WHERE id = ?`).run(voterId, id);
+    db.prepare(`UPDATE applications SET status = 'accepted', reviewed_by = ?, reviewed_at = datetime('now') WHERE id = ?`).run(acceptVotes.join(","), id);
     return { acceptVotes, rejectVotes, alreadyVoted: false, finalized: true, voteType: "accept" };
   }
   if (rejectVotes.length >= threshold) {
-    db.prepare(`UPDATE applications SET status = 'denied', reviewed_by = ?, reviewed_at = datetime('now') WHERE id = ?`).run(voterId, id);
+    db.prepare(`UPDATE applications SET status = 'denied', reviewed_by = ?, reviewed_at = datetime('now') WHERE id = ?`).run(rejectVotes.join(","), id);
     return { acceptVotes, rejectVotes, alreadyVoted: false, finalized: true, voteType: "reject" };
   }
 
