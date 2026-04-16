@@ -73,9 +73,7 @@ function questionsFromModal(fields, start, existing) {
     if (val) {
       result[globalIdx] = {
         label: val,
-        style: val.length > 50 ? "paragraph" : "short",
         required: globalIdx === 0,
-        max_length: 500,
       };
     } else if (result[globalIdx] !== undefined) {
       result[globalIdx] = undefined;
