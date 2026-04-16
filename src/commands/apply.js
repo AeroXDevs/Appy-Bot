@@ -203,7 +203,11 @@ const command = {
       } catch (err) {
         console.error("Apply collector error:", err);
         try {
-          await selectInteraction.reply({ content: "An error occurred while starting your application.", flags: MessageFlags.Ephemeral });
+          if (selectInteraction.deferred || selectInteraction.replied) {
+            await selectInteraction.followUp({ content: "An error occurred while starting your application.", flags: MessageFlags.Ephemeral });
+          } else {
+            await selectInteraction.reply({ content: "An error occurred while starting your application.", flags: MessageFlags.Ephemeral });
+          }
         } catch {}
       }
     });
