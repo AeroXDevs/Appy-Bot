@@ -86,7 +86,7 @@ export default {
 
       const result = insertApplication({
         userId: message.author.id,
-        userTag: message.author.tag,
+        userTag: message.author.username,
         guildId: message.guild.id,
         applicationName: config.name,
         answers: JSON.stringify(answersRecord),
